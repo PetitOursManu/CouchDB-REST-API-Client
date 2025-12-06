@@ -59,11 +59,23 @@ npm run dev
 
 #### Connexion à CouchDB
 
-1. **URL du serveur** : Adresse de votre serveur CouchDB (ex: `localhost:5984`)
-2. **Base de données** : Nom de la base de données à utiliser
+⚠️ **Important** : L'URL du serveur ne doit PAS contenir le protocole (http:// ou https://)
+
+1. **URL du serveur** : 
+   - Format : `serveur:port` ou `domaine.com:port`
+   - Exemples : `localhost:5984`, `db.monsite.com:5984`
+   - ❌ Incorrect : `http://localhost:5984`
+   - ✅ Correct : `localhost:5984`
+
+2. **Base de données** : Nom exact de votre base de données CouchDB
+
 3. **Nom d'utilisateur** : Votre identifiant CouchDB
+
 4. **Mot de passe** : Votre mot de passe CouchDB
-5. **SSL** : Cochez si votre serveur utilise HTTPS
+
+5. **Connexion SSL** : 
+   - Cochez cette option si votre serveur utilise HTTPS
+   - Le protocole sera automatiquement déterminé selon cette option
 
 #### Structure des documents
 
@@ -165,11 +177,23 @@ npm run dev
 
 #### CouchDB Connection
 
-1. **Server URL**: Your CouchDB server address (e.g., `localhost:5984`)
-2. **Database**: Name of the database to use
+⚠️ **Important**: The server URL must NOT contain the protocol (http:// or https://)
+
+1. **Server URL**: 
+   - Format: `server:port` or `domain.com:port`
+   - Examples: `localhost:5984`, `db.mysite.com:5984`
+   - ❌ Incorrect: `http://localhost:5984`
+   - ✅ Correct: `localhost:5984`
+
+2. **Database**: Exact name of your CouchDB database
+
 3. **Username**: Your CouchDB username
+
 4. **Password**: Your CouchDB password
-5. **SSL**: Check if your server uses HTTPS
+
+5. **SSL Connection**: 
+   - Check this option if your server uses HTTPS
+   - The protocol will be automatically determined based on this option
 
 #### Document Structure
 
