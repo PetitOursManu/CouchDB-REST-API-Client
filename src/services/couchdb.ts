@@ -9,6 +9,7 @@ export class CouchDBService {
   constructor(connection: Connection) {
     this.connection = connection;
     const protocol = connection.useSSL ? 'https' : 'http';
+    // Correct URL format: protocol://server/database
     this.baseUrl = `${protocol}://${connection.url}/${connection.database}`;
     
     // Setup authentication headers
