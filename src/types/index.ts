@@ -6,9 +6,19 @@ export interface Connection {
   useSSL: boolean;
 }
 
+export interface DocumentItem {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  category: string;
+  keywords: string[];
+}
+
 export interface Document {
   _id: string;
   _rev: string;
+  items?: DocumentItem[];
   [key: string]: any;
 }
 
