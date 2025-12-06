@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Server, Lock, Database, Shield, Save, Loader2, Info } from 'lucide-react';
 import { Connection } from '../types';
 import { CredentialManager } from '../services/couchdb';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ConnectionPanelProps {
   onConnect: (connection: Connection) => void;
 }
 
 const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<Connection>({
     url: '',
     database: '',
@@ -58,12 +60,12 @@ const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
         <div className="flex items-start space-x-2">
           <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
           <div className="text-sm text-blue-800 dark:text-blue-300">
-            <p className="font-semibold mb-1">Instructions de connexion :</p>
+            <p className="font-semibold mb-1">{t('connection.instructions')}</p>
             <ul className="list-disc list-inside space-y-1 text-xs">
-              <li>L'URL ne doit pas contenir le protocole (http:// ou https://)</li>
-              <li>Utilisez le format : <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">serveur:port</code> ou <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">domaine.com:port</code></li>
-              <li>Le port par défaut de CouchDB est 5984</li>
-              <li>Cochez "Connexion HTTPS/SSL" si votre serveur utilise SSL</li>
+              <li>{t('connection.instruction1')}</li>
+              <li>{t('connection.instruction2')} <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">serveur:port</code> ou <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">domaine.com:port</code></li>
+              <li>{t('connection.instruction3')}</li>
+              <li>{t('connection.instruction4')}</li>
             </ul>
           </div>
         </div>
@@ -73,36 +75,36 @@ const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
         <div>
           <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Server className="w-4 h-4 mr-2" />
-            URL du serveur
+            {t('connection.serverUrl')}
           </label>
           <input
             type="text"
             value={formData.url}
             onChange={handleChange('url')}
-            placeholder="localhost:5984 ou monserveur.com:5984"
+            placeholder={t('connection.serverUrlPlaceholder')}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
             required
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            ⚠️ Sans protocole (pas de http:// ou https://)
+            {t('connection.serverUrlWarning')}
           </p>
         </div>
 
         <div>
           <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Database className="w-4 h-4 mr-2" />
-            Nom de la base de données
+            {t('connection.database')}
           </label>
           <input
             type="text"
             value={formData.database}
             onChange={handleChange('database')}
-            placeholder="ma-base-de-donnees"
+            placeholder={t('connection.databasePlaceholder')}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
             required
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Nom exact de votre base de données CouchDB
+            {t('connection.databaseHelp')}
           </p>
         </div>
 
@@ -110,36 +112,36 @@ const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Lock className="w-4 h-4 mr-2" />
-              Nom d'utilisateur
+              {t('connection.username')}
             </label>
             <input
               type="text"
               value={formData.username}
               onChange={handleChange('username')}
-              placeholder="admin"
+              placeholder={t('connection.usernamePlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
               required
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Votre identifiant CouchDB
+              {t('connection.usernameHelp')}
             </p>
           </div>
 
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Lock className="w-4 h-4 mr-2" />
-              Mot de passe
+              {t('connection.password')}
             </label>
             <input
               type="password"
               value={formData.password}
               onChange={handleChange('password')}
-              placeholder="••••••••"
+              placeholder={t('connection.passwordPlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-700 dark:text-white"
               required
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Votre mot de passe CouchDB
+              {t('connection.passwordHelp')}
             </p>
           </div>
         </div>
@@ -154,11 +156,11 @@ const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
             />
             <span className="flex items-center text-sm text-gray-700 dark:text-gray-300">
               <Shield className="w-4 h-4 mr-2" />
-              Utiliser une connexion HTTPS/SSL
+              {t('connection.useSSL')}
             </span>
           </label>
           <p className="ml-7 text-xs text-gray-500 dark:text-gray-400">
-            Activez cette option si votre serveur CouchDB utilise SSL (https)
+            {t('connection.useSSLHelp')}
           </p>
 
           <label className="flex items-center space-x-3 cursor-pointer">
@@ -170,11 +172,11 @@ const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
             />
             <span className="flex items-center text-sm text-gray-700 dark:text-gray-300">
               <Save className="w-4 h-4 mr-2" />
-              Sauvegarder les identifiants (chiffrés)
+              {t('connection.saveCredentials')}
             </span>
           </label>
           <p className="ml-7 text-xs text-gray-500 dark:text-gray-400">
-            Les identifiants seront stockés localement de manière sécurisée
+            {t('connection.saveCredentialsHelp')}
           </p>
         </div>
 
@@ -186,12 +188,12 @@ const ConnectionPanel: React.FC<ConnectionPanelProps> = ({ onConnect }) => {
           {isConnecting ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Connexion en cours...</span>
+              <span>{t('connection.connecting')}</span>
             </>
           ) : (
             <>
               <Database className="w-5 h-5" />
-              <span>Se connecter à la base de données</span>
+              <span>{t('connection.connect')}</span>
             </>
           )}
         </button>

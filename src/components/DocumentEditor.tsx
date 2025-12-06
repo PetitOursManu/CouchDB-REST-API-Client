@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { Save, Trash2, Copy, Check, AlertCircle, Loader2, Plus, Edit2, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Document, DocumentItem } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 import clsx from 'clsx';
 
 interface DocumentEditorProps {
@@ -17,6 +18,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
   onDelete,
   isLoading
 }) => {
+  const { t } = useLanguage();
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -55,14 +57,14 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
       
       // Validate required fields for existing documents
       if (document._id && (!parsed._id || !parsed._rev)) {
-        setError('Document must contain _id and _rev fields');
+        setError(t('editor.mustContain'));
         return;
       }
       
       setError(null);
       onSave(parsed);
     } catch (e) {
-      setError('Invalid JSON: ' + (e as Error).message);
+      setError(`${t('editor.invalidJson')} ${(e as Error).message}`);
     }
   };
 
@@ -84,7 +86,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
       JSON.parse(value);
       setError(null);
     } catch (e) {
-      setError('Invalid JSON syntax');
+      setError(t('editor.syntaxError'));
     }
   };
 
@@ -116,7 +118,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
     if (!editingItem) return;
 
     if (!editingItem.title || !editingItem.description) {
-      setError('Title and description are required');
+      setError(t('form.requiredFields'));
       return;
     }
 
@@ -173,7 +175,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
       <div className="p-4 border-b border-gray-200 dark:border-slate-700">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {document._id ? 'Edit Document' : 'New Document'}
+            {document._id ? t('editor.edit') : t('editor.new')}
           </h2>
           <div className="flex items-center space-x-2">
             <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-slate-600">
@@ -203,7 +205,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <button
               onClick={handleCopy}
               className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              title="Copy JSON"
+              title={t('editor.copy')}
             >
               {copied ? (
                 <Check className="w-4 h-4 text-green-500" />
@@ -215,7 +217,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 rounded-lg transition-colors"
-                title="Delete Document"
+                title={t('editor.delete')}
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -234,7 +236,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              <span>{document._id ? 'Save' : 'Create'}</span>
+              <span>{document._id ? t('editor.save') : t('editor.create')}</span>
             </button>
           </div>
         </div>
@@ -281,74 +283,74 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Items ({items.length})
+                  {t('form.items')} ({items.length})
                 </h3>
                 <button
                   onClick={handleAddItem}
                   className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Item</span>
+                  <span>{t('form.addItem')}</span>
                 </button>
               </div>
 
               {editingItem && (
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-700">
                   <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
-                    {isNewItem ? 'New Item' : `Edit Item #${editingItem.id}`}
+                    {isNewItem ? t('form.newItem') : `${t('form.editItem')}${editingItem.id}`}
                   </h4>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Title *
+                        {t('form.title')} *
                       </label>
                       <input
                         type="text"
                         value={editingItem.title}
                         onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
-                        placeholder="Enter title"
+                        placeholder={t('form.titlePlaceholder')}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Description *
+                        {t('form.description')} *
                       </label>
                       <textarea
                         value={editingItem.description}
                         onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                         rows={3}
-                        placeholder="Enter description"
+                        placeholder={t('form.descriptionPlaceholder')}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Image URL
+                        {t('form.imageUrl')}
                       </label>
                       <input
                         type="text"
                         value={editingItem.imageUrl}
                         onChange={(e) => setEditingItem({ ...editingItem, imageUrl: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
-                        placeholder="https://example.com/image.jpg"
+                        placeholder={t('form.imageUrlPlaceholder')}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Category
+                        {t('form.category')}
                       </label>
                       <input
                         type="text"
                         value={editingItem.category}
                         onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
-                        placeholder="Enter category"
+                        placeholder={t('form.categoryPlaceholder')}
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Keywords (comma-separated)
+                        {t('form.keywords')}
                       </label>
                       <input
                         type="text"
@@ -358,7 +360,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
                         })}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
-                        placeholder="keyword1, keyword2, keyword3"
+                        placeholder={t('form.keywordsPlaceholder')}
                       />
                     </div>
                     <div className="flex items-center justify-end space-x-3 pt-2">
@@ -366,13 +368,13 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                         onClick={handleCancelEdit}
                         className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                       >
-                        Cancel
+                        {t('form.cancel')}
                       </button>
                       <button
                         onClick={handleSaveItem}
                         className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                       >
-                        {isNewItem ? 'Add' : 'Save'}
+                        {isNewItem ? t('form.add') : t('form.save')}
                       </button>
                     </div>
                   </div>
@@ -399,7 +401,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             )}
                           </div>
                           <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-1">
-                            {item.title || 'Untitled'}
+                            {item.title || t('form.untitled')}
                           </h4>
                           <button
                             onClick={() => toggleItemExpansion(item.id)}
@@ -408,12 +410,12 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             {expandedItems.has(item.id) ? (
                               <>
                                 <ChevronUp className="w-4 h-4" />
-                                <span>Hide details</span>
+                                <span>{t('form.hideDetails')}</span>
                               </>
                             ) : (
                               <>
                                 <ChevronDown className="w-4 h-4" />
-                                <span>Show details</span>
+                                <span>{t('form.showDetails')}</span>
                               </>
                             )}
                           </button>
@@ -439,11 +441,11 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                       {expandedItems.has(item.id) && (
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-2">
                           <p className="text-sm text-gray-700 dark:text-gray-300">
-                            {item.description || 'No description'}
+                            {item.description || t('form.noDescription')}
                           </p>
                           {item.imageUrl && (
                             <div>
-                              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Image:</span>
+                              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t('form.image')}</span>
                               <a 
                                 href={item.imageUrl} 
                                 target="_blank" 
@@ -456,7 +458,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           )}
                           {item.keywords.length > 0 && (
                             <div>
-                              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Keywords:</span>
+                              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{t('form.keywordsList')}</span>
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {item.keywords.map((keyword, idx) => (
                                   <span
@@ -477,12 +479,12 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
                 
                 {items.length === 0 && !editingItem && (
                   <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                    <p className="mb-4">No items yet</p>
+                    <p className="mb-4">{t('form.noItems')}</p>
                     <button
                       onClick={handleAddItem}
                       className="text-indigo-600 hover:text-indigo-700 font-medium"
                     >
-                      Add your first item
+                      {t('form.addFirstItem')}
                     </button>
                   </div>
                 )}
@@ -505,23 +507,23 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 rounded-xl">
           <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-sm mx-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Delete Document?
+              {t('editor.deleteConfirm')}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              This action cannot be undone. The document will be permanently deleted.
+              {t('editor.deleteWarning')}
             </p>
             <div className="flex items-center justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                Cancel
+                {t('editor.cancel')}
               </button>
               <button
                 onClick={handleDelete}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
               >
-                Delete
+                {t('editor.confirmDelete')}
               </button>
             </div>
           </div>

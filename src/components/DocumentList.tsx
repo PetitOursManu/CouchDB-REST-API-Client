@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FileText, Plus, RefreshCw, Search, Filter, Loader2 } from 'lucide-react';
 import { Document } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 import clsx from 'clsx';
 
 interface DocumentListProps {
@@ -20,6 +21,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
   onRefresh,
   isLoading
 }) => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'recent'>('all');
 
@@ -44,21 +46,21 @@ const DocumentList: React.FC<DocumentListProps> = ({
       <div className="p-4 border-b border-gray-200 dark:border-slate-700">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Documents ({documents.length})
+            {t('documents.title')} ({documents.length})
           </h2>
           <div className="flex items-center space-x-2">
             <button
               onClick={onRefresh}
               disabled={isLoading}
               className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              title="Refresh"
+              title={t('documents.refresh')}
             >
               <RefreshCw className={clsx('w-4 h-4', isLoading && 'animate-spin')} />
             </button>
             <button
               onClick={onCreateNew}
               className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-              title="New Document"
+              title={t('documents.new')}
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -71,7 +73,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search documents..."
+            placeholder={t('documents.search')}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-700 dark:text-white text-sm"
           />
         </div>
@@ -83,8 +85,8 @@ const DocumentList: React.FC<DocumentListProps> = ({
             onChange={(e) => setFilterType(e.target.value as 'all' | 'recent')}
             className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 dark:bg-slate-700 dark:text-white"
           >
-            <option value="all">All Documents</option>
-            <option value="recent">Recent First</option>
+            <option value="all">{t('documents.filterAll')}</option>
+            <option value="recent">{t('documents.filterRecent')}</option>
           </select>
         </div>
       </div>
@@ -96,7 +98,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
           </div>
         ) : sortedDocuments.length === 0 ? (
           <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-            {searchTerm ? 'No documents match your search' : 'No documents found'}
+            {searchTerm ? t('documents.noMatch') : t('documents.noFound')}
           </div>
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-slate-700">
@@ -120,7 +122,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
                     </p>
                     {Object.keys(doc).length > 2 && (
                       <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                        {Object.keys(doc).length - 2} fields
+                        {Object.keys(doc).length - 2} {t('documents.fields')}
                       </p>
                     )}
                   </div>

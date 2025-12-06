@@ -7,8 +7,10 @@ import Header from './components/Header';
 import { CouchDBService } from './services/couchdb';
 import { Connection, Document, AppState } from './types';
 import { Database, AlertCircle } from 'lucide-react';
+import { useLanguage } from './contexts/LanguageContext';
 
 function App() {
+  const { t } = useLanguage();
   const [appState, setAppState] = useState<AppState>({
     connection: null,
     isConnected: false,
@@ -45,7 +47,7 @@ function App() {
       setAppState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Connection failed'
+        error: error instanceof Error ? error.message : t('error.connection')
       }));
     }
   };
@@ -81,7 +83,7 @@ function App() {
       setAppState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to load documents'
+        error: error instanceof Error ? error.message : t('error.loadDocuments')
       }));
     }
   };
@@ -112,7 +114,7 @@ function App() {
       setAppState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to save document'
+        error: error instanceof Error ? error.message : t('error.saveDocument')
       }));
     }
   };
@@ -136,7 +138,7 @@ function App() {
       setAppState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to create document'
+        error: error instanceof Error ? error.message : t('error.createDocument')
       }));
     }
   };
@@ -160,7 +162,7 @@ function App() {
       setAppState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to delete document'
+        error: error instanceof Error ? error.message : t('error.deleteDocument')
       }));
     }
   };
@@ -179,10 +181,10 @@ function App() {
             <div className="text-center mb-8">
               <Database className="w-16 h-16 mx-auto text-indigo-600 mb-4" />
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Connect to CouchDB
+                {t('connection.title')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Enter your CouchDB server details to get started
+                {t('connection.subtitle')}
               </p>
             </div>
             <ConnectionPanel onConnect={handleConnect} />
@@ -215,10 +217,10 @@ function App() {
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-12 text-center">
                   <Database className="w-24 h-24 mx-auto text-gray-300 dark:text-gray-600 mb-4" />
                   <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                    No Document Selected
+                    {t('empty.noDocument')}
                   </h3>
                   <p className="text-gray-500 dark:text-gray-500">
-                    Select a document from the list or create a new one to get started
+                    {t('empty.selectOrCreate')}
                   </p>
                 </div>
               )}
@@ -231,7 +233,7 @@ function App() {
             <div className="flex items-start">
               <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 mr-3 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold text-red-900 dark:text-red-200">Error</h4>
+                <h4 className="font-semibold text-red-900 dark:text-red-200">{t('error.title')}</h4>
                 <p className="text-sm text-red-700 dark:text-red-300 mt-1">{appState.error}</p>
               </div>
             </div>
